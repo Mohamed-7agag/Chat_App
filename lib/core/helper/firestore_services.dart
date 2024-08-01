@@ -1,3 +1,5 @@
+import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:chateo/core/helper/auth_services.dart';
@@ -9,6 +11,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart';
 
 class FirestoreService {
   // Private constructor
@@ -55,8 +58,10 @@ class FirestoreService {
             pushToken: '',
             image: avatar,
           ).toJson(),
-        );
-    await addUserToMyUsers(email);
+        )
+        .then((value) {
+      addUserToMyUsers(email);
+    });
   }
 
 //! Get All Users
@@ -134,11 +139,11 @@ class FirestoreService {
   Future<void> updateLastActiveStatus(bool isOnline) {
     return firestore
         .collection(AppConstants.users)
-        .doc(AppConstants.currentUser!.id)
+        .doc(AuthService.instance.auth.currentUser!.uid)
         .update({
       'isOnline': isOnline,
       'lastActive': DateTime.now().millisecondsSinceEpoch.toString(),
-      'pushToken': AppConstants.currentUser!.pushToken,
+      'pushToken': AppConstants.userPushToken,
     });
   }
 
@@ -187,7 +192,7 @@ class FirestoreService {
         : '${id}_${AuthService.instance.auth.currentUser!.uid}';
   }
 
-  //! Add Message
+  //! send Message
   Future<void> sendMessage({
     required String message,
     required String type,
@@ -208,7 +213,9 @@ class FirestoreService {
             readAt: '',
             type: type,
           ).toJson(),
-        );
+        )
+        .then((value) =>
+            sendPushNotification(user, type == 'text' ? message : '**image**'));
   }
 
 //! Update Message Read
@@ -279,9 +286,43 @@ class FirestoreService {
     await fcm.requestPermission();
     fcm.getToken().then((token) {
       if (token != null) {
-        AppConstants.currentUser =
-            AppConstants.currentUser!.copyWith(pushToken: token);
+        AppConstants.userPushToken = token;
+        updateLastActiveStatus(true);
       }
     });
+  }
+
+//! for sending push notification (Updated Codes)
+  static Future<void> sendPushNotification(UserModel user, String msg) async {
+    try {
+      log('in fun : ${user.pushToken}');
+      final body = {
+        "message": {
+          "token": user.pushToken,
+          "notification": {
+            "title": AppConstants.currentUser!.name,
+            "body": msg,
+          },
+        }
+      };
+
+      const String accessToken =
+          'ya29.a0AXooCgvrBerEQ_-Hf6TtF1ILXQMKeQ3otdiDoWz6ir7qbs1vr3XnjYrawMrFZslQYxGQSZ6kKCIXX8SWkIpHgy0G5UhP4S0YWvh7zK4N2v44iJ_11h7dgzf3reRlkh1B3VwNel-ygvKZQcJzEvkt4mbPuhK2X_CBSFYaCgYKAd4SARMSFQHGX2MisAavPrcOG0hNIda-zysTiA0170';
+
+      var res = await post(
+        Uri.parse(
+            'https://fcm.googleapis.com/v1/projects/${AppConstants.projectID}/messages:send'),
+        headers: {
+          HttpHeaders.contentTypeHeader: 'application/json',
+          HttpHeaders.authorizationHeader: 'Bearer $accessToken',
+        },
+        body: jsonEncode(body),
+      );
+
+      log('Response status: ${res.statusCode}');
+      log('Response body: ${res.body}');
+    } catch (e) {
+      log('\nsendPushNotificationE: $e');
+    }
   }
 }

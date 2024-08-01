@@ -40,7 +40,9 @@ class ProfileView extends StatelessWidget {
               btnOkOnPress: () {
                 context.read<AuthCubit>().logout().then((value) {
                   Navigator.pushReplacementNamed(
-                      context, Routes.loginViewRoute);
+                    context,
+                    Routes.loginViewRoute,
+                  );
                 });
               }).show();
         },

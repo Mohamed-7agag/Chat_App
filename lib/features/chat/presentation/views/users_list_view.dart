@@ -36,22 +36,20 @@ class _UsersListViewState extends State<UsersListView> {
   @override
   void initState() {
     super.initState();
-    FirestoreService.instance.getFCMToken();
+     FirestoreService.instance.getFCMToken();
 
-    if (AppConstants.currentUser != null) {
-      FirestoreService.instance.updateLastActiveStatus(true);
-      SystemChannels.lifecycle.setMessageHandler(
-        (message) {
-          if (message.toString().contains('resume')) {
-            FirestoreService.instance.updateLastActiveStatus(true);
-          }
-          if (message.toString().contains('pause')) {
-            FirestoreService.instance.updateLastActiveStatus(false);
-          }
-          return Future.value(message);
-        },
-      );
-    }
+    FirestoreService.instance.updateLastActiveStatus(true);
+    SystemChannels.lifecycle.setMessageHandler(
+      (message) {
+        if (message.toString().contains('resume')) {
+          FirestoreService.instance.updateLastActiveStatus(true);
+        }
+        if (message.toString().contains('pause')) {
+          FirestoreService.instance.updateLastActiveStatus(false);
+        }
+        return Future.value(message);
+      },
+    );
   }
 
   @override
@@ -120,28 +118,6 @@ class _UsersListViewState extends State<UsersListView> {
                 },
                 child: Text(
                   "Profile",
-                  style: Styles.textStyle18,
-                ),
-              ),
-              PopupMenuItem(
-                padding:
-                    const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
-                value: "Light Mode",
-                height: 30,
-                onTap: () {},
-                child: Text(
-                  "Light Mode",
-                  style: Styles.textStyle18,
-                ),
-              ),
-              PopupMenuItem(
-                padding:
-                    const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
-                value: "Dark Mode",
-                height: 30,
-                onTap: () {},
-                child: Text(
-                  "Dark Mode",
                   style: Styles.textStyle18,
                 ),
               ),

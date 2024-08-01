@@ -1,5 +1,6 @@
 import 'package:chateo/core/helper/auth_services.dart';
 import 'package:chateo/core/helper/firestore_services.dart';
+import 'package:chateo/core/utils/constants.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -14,7 +15,6 @@ class AuthCubit extends Cubit<AuthState> {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   String? avatar;
-
 
 //! login
   Future<void> login() async {
@@ -65,5 +65,6 @@ class AuthCubit extends Cubit<AuthState> {
 //! logout
   Future<void> logout() async {
     await AuthService.instance.auth.signOut();
+    AppConstants.currentUser = null;
   }
 }

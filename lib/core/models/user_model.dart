@@ -52,21 +52,6 @@ class UserModel extends Equatable {
       };
 
 
-UserModel? copyWith({required String pushToken}) {
-    return UserModel(
-      image: image,
-      createdAt: createdAt,
-      password: password,
-      lastActive: lastActive,
-      about: about,
-      name: name,
-      isOnline: isOnline,
-      id: id,
-      pushToken: pushToken,
-      email: email,
-    );
-  }
-
   @override
   List<Object?> get props {
     return [

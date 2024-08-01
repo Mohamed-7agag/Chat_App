@@ -8,6 +8,7 @@ abstract class AppConstants {
   static const String chats = 'chats';
   static const String intro = 'intro';
   static const String projectID = 'chateo-79d03';
+  static String? userPushToken;
 
   static UserModel? currentUser;
   static MessageModel? lastMessage;
