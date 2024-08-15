@@ -1,4 +1,6 @@
 
+import 'dart:developer';
+
 import 'package:chateo/core/helper/auth_services.dart';
 import 'package:chateo/core/helper/firestore_services.dart';
 import 'package:chateo/core/models/user_model.dart';
@@ -23,6 +25,7 @@ class UsersListViewBody extends StatelessWidget {
         }
 
         if (userIdSnapshot.hasError) {
+          log('Error fetching user IDs: ${userIdSnapshot.error}');
           return const CustomFailureWidget(
               errMessage: 'Error fetching user IDs');
         }
@@ -33,6 +36,7 @@ class UsersListViewBody extends StatelessWidget {
 
         final userIds =
             userIdSnapshot.data?.docs.map((e) => e.id).toList() ?? [];
+            
 
         if (userIds.isEmpty) {
           return const CustomFailureWidget(errMessage: 'No user IDs found');

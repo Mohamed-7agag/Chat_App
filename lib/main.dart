@@ -8,9 +8,11 @@ import 'package:google_fonts/google_fonts.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
-  //await FirestoreService.instance.getFCMToken();
-  CacheHelper.init();
+  await Future.wait([
+    Firebase.initializeApp(),
+    CacheHelper.init(),
+  ]);
+
   runApp(const MyApp());
 }
 

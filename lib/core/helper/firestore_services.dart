@@ -177,11 +177,13 @@ class FirestoreService {
       'about': about,
       'image': image,
     }).then((value) {
-      successCherryToast(
-        context,
-        'Success',
-        'Profile Info Updated',
-      );
+      if (context.mounted) {
+        successCherryToast(
+          context,
+          'Success',
+          'Profile Info Updated',
+        );
+      }
     });
   }
 

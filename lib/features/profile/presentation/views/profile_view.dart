@@ -39,10 +39,12 @@ class ProfileView extends StatelessWidget {
               btnOkColor: const Color(0xff00ca71),
               btnOkOnPress: () {
                 context.read<AuthCubit>().logout().then((value) {
-                  Navigator.pushReplacementNamed(
-                    context,
-                    Routes.loginViewRoute,
-                  );
+                  if (context.mounted) {
+                    Navigator.pushReplacementNamed(
+                      context,
+                      Routes.loginViewRoute,
+                    );
+                  }
                 });
               }).show();
         },

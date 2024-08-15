@@ -36,7 +36,7 @@ class _UsersListViewState extends State<UsersListView> {
   @override
   void initState() {
     super.initState();
-     FirestoreService.instance.getFCMToken();
+    FirestoreService.instance.getFCMToken();
 
     FirestoreService.instance.updateLastActiveStatus(true);
     SystemChannels.lifecycle.setMessageHandler(
@@ -183,11 +183,15 @@ class _UsersListViewState extends State<UsersListView> {
                       .then(
                     (value) {
                       if (value) {
-                        successCherryToast(
-                            context, 'Success', 'User added successfully');
+                        if (context.mounted) {
+                          successCherryToast(
+                              context, 'Success', 'User added successfully');
+                        }
                       } else {
-                        errorCherryToast(
-                            context, 'Error', 'Email is not Found');
+                        if (context.mounted) {
+                          errorCherryToast(
+                              context, 'Error', 'Email is not Found');
+                        }
                       }
                       controller.clear();
                     },
